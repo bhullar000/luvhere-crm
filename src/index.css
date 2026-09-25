@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, #root { height: 100%; }
+  body { @apply bg-bg text-ink font-sans antialiased; }
+  * { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.15) transparent; }
+  ::selection { background: rgba(255,63,142,.35); }
+}
+
+@layer components {
+  .card { @apply bg-surface border rounded-[20px] p-5; }
+  .label { @apply text-[11px] font-semibold tracking-wider uppercase text-quiet; }
+  .input { @apply w-full bg-elevated border rounded-xl px-3.5 py-2.5 text-[14px] text-ink placeholder:text-quiet outline-none focus:border-pink/40 transition-colors; }
+  .th { @apply text-left label px-4 py-3 font-semibold whitespace-nowrap; }
+  .td { @apply px-4 py-3 text-[14px] align-middle; }
+}
