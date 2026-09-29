@@ -8,6 +8,7 @@ import Audit from './pages/Audit';
 import Blocks from './pages/Blocks';
 import Broadcasts from './pages/Broadcasts';
 import Dashboard from './pages/Dashboard';
+import Integrations from './pages/Integrations';
 import Login from './pages/Login';
 import Photos from './pages/Photos';
 import Reference from './pages/Reference';
@@ -41,6 +42,7 @@ export default function App() {
         <Route path="reference" element={<Reference />} />
         <Route path="broadcasts" element={<Guard roles={['admin', 'moderator', 'support']}><Broadcasts /></Guard>} />
         <Route path="settings" element={<Guard roles={['admin']}><Settings /></Guard>} />
+        <Route path="integrations" element={<Guard roles={['admin']}><Integrations /></Guard>} />
         <Route path="admins" element={<Guard roles={[]}><Admins /></Guard>} />
         <Route path="audit" element={<Guard roles={[]}><Audit /></Guard>} />
         <Route path="*" element={<Navigate to="/" replace />} />
