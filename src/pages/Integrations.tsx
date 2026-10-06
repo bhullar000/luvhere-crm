@@ -12,6 +12,7 @@ const INTEGRATIONS: { key: string; title: string; test: string; live: string }[]
   { key: 'verification', title: 'Face verification', test: 'The liveness check and the photo face match always pass.', live: 'AWS Rekognition liveness, and every photo matched to the live face.' },
   { key: 'inappropriate', title: 'Inappropriate photo check', test: 'Every upload is treated as clean.', live: 'AWS Rekognition scans each upload; blocked photos are deleted and the user told.' },
   { key: 'moderation', title: 'Photo moderation', test: 'New photos are approved automatically.', live: 'New photos wait in Photo moderation for a reviewer.' },
+  { key: 'payments', title: 'Premium payments', test: 'Choosing a plan grants it at once with no charge (test purchase).', live: 'No payment gateway is connected yet, so purchases are refused.' },
 ];
 
 export default function Integrations() {

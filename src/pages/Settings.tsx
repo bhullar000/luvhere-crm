@@ -26,8 +26,10 @@ export default function Settings() {
       <div className="grid lg:grid-cols-2 gap-4">
         <div className="card space-y-4">
           <div className="label">Free plan limits</div>
-          <Field label="Likes per day" hint="Enforced by the discovery service for non-premium users."><input className="input" type="number" min={0} value={s.free_limits.likes_per_day} onChange={num('free_limits', 'likes_per_day')} /></Field>
-          <Field label="Messages per match" hint="Shown in the app; enforce it in chat once premium is wired."><input className="input" type="number" min={0} value={s.free_limits.messages_per_match} onChange={num('free_limits', 'messages_per_match')} /></Field>
+          <Field label="Likes per day" hint="Likes a user can send each day unless their plan has unlimited likes."><input className="input" type="number" min={0} value={s.free_limits.likes_per_day} onChange={num('free_limits', 'likes_per_day')} /></Field>
+          <Field label="Messages per match" hint="Messages a user can send in each match chat unless their plan has unlimited chat with matches."><input className="input" type="number" min={0} value={s.free_limits.messages_per_match} onChange={num('free_limits', 'messages_per_match')} /></Field>
+          <Field label="Anonymous chats per day" hint="New anonymous conversations a user can start each day without the anonymous chat feature."><input className="input" type="number" min={0} value={s.free_limits.anon_chats_per_day ?? 2} onChange={num('free_limits', 'anon_chats_per_day')} /></Field>
+          <Field label="Messages per anonymous chat" hint="Messages a user can send in each anonymous chat without the anonymous chat feature."><input className="input" type="number" min={0} value={s.free_limits.anon_messages_per_chat ?? 5} onChange={num('free_limits', 'anon_messages_per_chat')} /></Field>
         </div>
         <div className="card space-y-4">
           <div className="label">App version & availability</div>

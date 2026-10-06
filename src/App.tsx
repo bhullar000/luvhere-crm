@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import Integrations from './pages/Integrations';
 import Login from './pages/Login';
 import Photos from './pages/Photos';
+import Premium from './pages/Premium';
 import Reference from './pages/Reference';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="reference" element={<Reference />} />
         <Route path="broadcasts" element={<Guard roles={['admin', 'moderator', 'support']}><Broadcasts /></Guard>} />
         <Route path="settings" element={<Guard roles={['admin']}><Settings /></Guard>} />
+        <Route path="premium" element={<Guard roles={['admin']}><Premium /></Guard>} />
         <Route path="integrations" element={<Guard roles={['admin']}><Integrations /></Guard>} />
         <Route path="admins" element={<Guard roles={[]}><Admins /></Guard>} />
         <Route path="audit" element={<Guard roles={[]}><Audit /></Guard>} />
