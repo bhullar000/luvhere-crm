@@ -140,6 +140,7 @@ export default function UserDetail() {
           <div className="card"><div className="label mb-3">Verification attempts</div>
             {u.verifications.length ? u.verifications.map((v: any) => <div key={v.id} className="flex justify-between items-center py-1.5 text-[14px]"><StatusBadge status={v.status} /><span className="text-quiet">{v.failure_reason ?? (v.confidence ? `${Math.round(v.confidence * 100)}% conf.` : '')} · {timeAgo(v.created_at)}</span></div>) : <p className="text-quiet text-[14px]">No attempts.</p>}
           </div>
+          <UserEvents userId={id!} />
           <div className="card"><div className="label mb-3">Preferences</div>
             {u.preference ? <div className="text-[14px] text-soft space-y-1"><div>Age {u.preference.min_age}–{u.preference.max_age} · within {u.preference.max_distance_km} km</div><div>Show me: {titleCase(u.preference.show_me)}</div><div>{u.preference.verified_only && 'Verified only · '}{u.preference.online_only && 'Online only'}</div></div> : <p className="text-quiet text-[14px]">Not set.</p>}
           </div>
@@ -176,5 +177,16 @@ export default function UserDetail() {
         <Field label="Message"><textarea className="input min-h-[90px]" maxLength={300} value={msg.body} onChange={(e) => setMsg({ ...msg, body: e.target.value })} /></Field>
       </Modal>
     </>
+  );
+}
+
+/** The user's latest in-app events, with a link to the full feed. */
+function UserEvents({ userId }: { userId: string }) {
+  const { data } = useQuery({ queryKey: ['app-events', 'user', userId], queryFn: () => get('/app-events', { user_id: userId, per_page: 10 }) });
+  const events = data?.data ?? [];
+  return (
+    <div className="card"><div className="flex justify-between items-center mb-3"><div className="label">In-app activity</div><Link to={`/app-events?tab=feed&user=${userId}`} className="text-[13px] text-pink">See all</Link></div>
+      {events.length ? events.map((e: any) => <div key={e.id} className="flex justify-between py-1.5 text-[14px]"><span className="text-soft">{titleCase(e.name)}{e.props?.screen ? <span className="text-quiet"> · {e.props.screen}</span> : null}</span><span className="text-quiet">{timeAgo(e.occurred_at ?? e.created_at)}</span></div>) : <p className="text-quiet text-[14px]">No app events yet.</p>}
+    </div>
   );
 }

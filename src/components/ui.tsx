@@ -30,6 +30,26 @@ export function Button({ variant = 'secondary', size = 'md', loading, className,
   );
 }
 
+/* ---------- Toggle ---------- */
+export function Toggle({ checked, onChange, label, disabled }: { checked: boolean; onChange: (next: boolean) => void; label?: string; disabled?: boolean }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      disabled={disabled}
+      onClick={() => onChange(!checked)}
+      className={clsx(
+        'relative inline-flex h-7 w-12 shrink-0 items-center rounded-full border transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
+        checked ? 'bg-brand border-transparent shadow-glow' : 'bg-white/10 border-white/10',
+      )}
+    >
+      <span className={clsx('inline-block h-5 w-5 rounded-full bg-white shadow transition-transform', checked ? 'translate-x-6' : 'translate-x-1')} />
+    </button>
+  );
+}
+
 /* ---------- Badge ---------- */
 const TONES = {
   neutral: 'bg-white/5 text-muted border-white/10',

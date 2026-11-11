@@ -4,6 +4,7 @@ import { Spinner } from './components/ui';
 import { useAuth, type Role } from './lib/auth';
 import Admins from './pages/Admins';
 import Analytics from './pages/Analytics';
+import AppEvents from './pages/AppEvents';
 import Audit from './pages/Audit';
 import Blocks from './pages/Blocks';
 import Broadcasts from './pages/Broadcasts';
@@ -34,6 +35,7 @@ export default function App() {
       <Route element={<Layout />}>
         <Route index element={<Dashboard />} />
         <Route path="analytics" element={<Analytics />} />
+        <Route path="app-events" element={<AppEvents />} />
         <Route path="users" element={<Users />} />
         <Route path="users/:id" element={<UserDetail />} />
         <Route path="photos" element={<Photos />} />

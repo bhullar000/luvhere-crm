@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import {
-  BarChart3, Ban, Bell, BookOpen, Crown, Flag, Heart, Image, LayoutDashboard, LogOut, Plug, ScrollText, Settings as Cog, ShieldCheck, UserCog, Users as UsersIcon,
+  Activity, BarChart3, Ban, Bell, BookOpen, Crown, Flag, Heart, Image, LayoutDashboard, LogOut, Plug, ScrollText, Settings as Cog, ShieldCheck, UserCog, Users as UsersIcon,
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { NavLink, Outlet } from 'react-router-dom';
@@ -13,6 +13,7 @@ const NAV: { title: string; items: Item[] }[] = [
   { title: 'Overview', items: [
     { to: '/', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/analytics', label: 'Analytics', icon: BarChart3 },
+    { to: '/app-events', label: 'App activity', icon: Activity },
   ] },
   { title: 'People', items: [
     { to: '/users', label: 'Users', icon: UsersIcon },
