@@ -45,14 +45,19 @@ jobs:
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts 2>/dev/null
 
-      # --delete removes stale build files, but excluded paths are never
-      # touched: the backend/ folder (and server-managed files) stay intact.
+      # --delete removes stale build files. "P" (protect) rules stop rsync
+      # from deleting these on the server. No trailing slash on purpose:
+      # "backend/" only matches a real directory, so a backend symlink
+      # was not protected and got deleted. "/backend" matches it as a
+      # directory, symlink or file, at the top of public_html only.
       - name: Upload build over rsync
         run: |
           rsync -az --delete \
-            --exclude='backend/' \
-            --exclude='.htaccess' \
-            --exclude='.well-known/' \
+            --filter='P /backend' \
+            --filter='P /backend/**' \
+            --filter='P /.htaccess' \
+            --filter='P /.well-known' \
+            --filter='P /.well-known/**' \
             -e "ssh -i ~/.ssh/deploy_key -o BatchMode=yes" \
             dist/ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
 
