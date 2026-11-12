@@ -1,10 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState, type ChangeEvent } from 'react';
-import { Button, ErrorBox, Field, PageHeader, Spinner, Toggle, useToast } from '../components/ui';
-import { get, put } from '../lib/api';
+import { Trash2 } from 'lucide-react';
+import { Button, ErrorBox, Field, Modal, PageHeader, Spinner, Toggle, useToast } from '../components/ui';
+import { get, post, put } from '../lib/api';
+import { useAuth } from '../lib/auth';
 
 export default function Settings() {
   const qc = useQueryClient();
+  const { can } = useAuth();
   const toast = useToast();
   const { data, isLoading, error } = useQuery({ queryKey: ['settings'], queryFn: () => get('/settings') });
   const [s, setS] = useState<any>(null);
@@ -56,7 +59,66 @@ export default function Settings() {
           </div>
           <Field label="Message" hint="Optional. Shown in the popup instead of the default text."><input className="input" value={s.app.update_message ?? ''} onChange={appStr('update_message')} /></Field>
         </div>
+        {can() && <ClearTestData />}
       </div>
     </>
+  );
+}
+
+type ResetInfo = { enabled: boolean; phrase: string; counts: Record<string, number>; files: number };
+
+// Super admin only: wipes members and everything they created, keeping seed data.
+function ClearTestData() {
+  const qc = useQueryClient();
+  const toast = useToast();
+  const [open, setOpen] = useState(false);
+  const [phrase, setPhrase] = useState('');
+  const [password, setPassword] = useState('');
+  const { data } = useQuery({ queryKey: ['data-reset'], queryFn: () => get<ResetInfo>('/data-reset') });
+
+  const reset = useMutation({
+    mutationFn: () => post<{ rows: number; files_deleted: number; references_skipped: number }>('/data-reset', { phrase, password }),
+    onSuccess: (r) => {
+      toast(`Cleared ${r.rows} rows and ${r.files_deleted} files`);
+      if (r.references_skipped) toast(`${r.references_skipped} face references left on disk: set VERIFICATION_DISK`, 'danger');
+      setOpen(false);
+      qc.invalidateQueries();
+    },
+    onError: (e: Error) => toast(e.message, 'danger'),
+  });
+
+  const close = () => { setOpen(false); setPhrase(''); setPassword(''); };
+  const counts = data?.counts ?? {};
+  const users = counts.users ?? 0;
+  const total = Object.values(counts).reduce((a, b) => a + b, 0);
+  const shown = ['users', 'photos', 'verifications', 'likes', 'matches', 'messages', 'anon_conversations', 'reports', 'subscriptions', 'analytics_events'];
+
+  return (
+    <div className="card space-y-4 lg:col-span-2 border-danger/40">
+      <div className="label text-danger">Danger zone</div>
+      <div className="flex items-center justify-between gap-4 bg-elevated border rounded-2xl px-4 py-3">
+        <div>
+          <div className="font-medium text-[14px]">Clear test data</div>
+          <div className="text-quiet text-[12px]">Deletes every user with their photos, verifications, likes, matches, chats, reports, payments and analytics, plus the image files. Keeps cities, interests, languages, lifestyle options, app settings, the premium catalogue, CRM staff and the audit log.</div>
+        </div>
+        <Button variant="danger" disabled={!data?.enabled} onClick={() => setOpen(true)}><Trash2 size={15} /> Clear test data</Button>
+      </div>
+      {data && !data.enabled && <div className="text-quiet text-[12px]">Turned off on this server (ALLOW_DATA_RESET=false).</div>}
+
+      <Modal open={open} onClose={close} title="Clear all test data?"
+        footer={<>
+          <Button variant="ghost" onClick={close}>Cancel</Button>
+          <Button variant="danger" loading={reset.isPending} disabled={phrase !== data?.phrase || !password} onClick={() => reset.mutate()}>Delete everything</Button>
+        </>}>
+        <p className="text-muted text-[14px]">This permanently deletes {users} users and {total} rows in all, plus {data?.files ?? 0} files. It can't be undone.</p>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[13px]">
+          {shown.filter((k) => k in counts).map((k) => (
+            <div key={k} className="flex justify-between"><span className="text-quiet">{k.replace(/_/g, ' ')}</span><span>{counts[k]}</span></div>
+          ))}
+        </div>
+        <Field label={`Type "${data?.phrase ?? ''}" to confirm`}><input className="input" value={phrase} onChange={(e) => setPhrase(e.target.value)} autoComplete="off" /></Field>
+        <Field label="Your password"><input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" /></Field>
+      </Modal>
+    </div>
   );
 }
