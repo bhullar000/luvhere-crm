@@ -35,7 +35,7 @@ jobs:
 
       - name: Build
         env:
-          VITE_API_URL: https://crm.luvhere.com/backend/
+          VITE_API_URL: https://crm.luvhere.com/backend
         run: npm run build
 
       - name: Set up SSH
